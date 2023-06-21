@@ -12,7 +12,6 @@ const App = () => {
     const imageId = Math.floor(Math.random() * 5000);
 
     const image = await getImage(imageId);
-    console.log("ff e", image);
     setMoveableComponents([
       ...moveableComponents,
       {
@@ -29,13 +28,25 @@ const App = () => {
     ]);
   };
 
+  const deleteMoveable = () => {
+    if (selected) {
+      const components = moveableComponents.filter(
+        (moveableComponent) => moveableComponent.id !== selected
+      );
+      setSelected(null);
+      setMoveableComponents(components);
+    }
+  };
   const getImage = async (id) => {
-    const response = await fetch(
-      `https://jsonplaceholder.typicode.com/photos/${id}`
-    );
-    const data = await response.json();
-    console.log("ff", data);
-    return data.url;
+    try {
+      const response = await fetch(
+        `https://jsonplaceholder.typicode.com/photos/${id}`
+      );
+      const data = await response.json();
+      return data.url;
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const updateMoveable = (id, newComponent, updateEnd = false) => {
@@ -72,6 +83,7 @@ const App = () => {
   return (
     <main style={{ height: "100vh", width: "100vw" }}>
       <button onClick={addMoveable}>Add Moveable1</button>
+      <button onClick={deleteMoveable}>Delete Moveable</button>
       <div
         id="parent"
         style={{
@@ -174,7 +186,6 @@ const Component = ({
   const onResizeEnd = async (e) => {
     let newWidth = e.lastEvent?.width;
     let newHeight = e.lastEvent?.height;
-    console.log(e.lastEvent);
     const positionMaxTop = top + newHeight;
     const positionMaxLeft = left + newWidth;
 
@@ -182,10 +193,6 @@ const Component = ({
       newHeight = parentBounds?.height - top;
     if (positionMaxLeft > parentBounds?.width)
       newWidth = parentBounds?.width - left;
-
-    const { lastEvent } = e;
-    const { drag } = lastEvent;
-    const { beforeTranslate } = drag;
 
     const absoluteTop = top;
     const absoluteLeft = left;
@@ -218,12 +225,21 @@ const Component = ({
           width: width,
           height: height,
           background: color,
-          backgroundImage: `url(${image})`,
-          backgroundRepeat: "no-repeat",
-          objectFit: fit,
         }}
-        onClick={() => setSelected(id)}
-      />
+        onClick={() => {
+          setSelected(id);
+        }}
+      >
+        <img
+          alt="a"
+          src={image}
+          style={{
+            width: width,
+            height: height,
+            objectFit: fit,
+          }}
+        />
+      </div>
 
       <Moveable
         target={isSelected && ref.current}
