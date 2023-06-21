@@ -1,0 +1,34 @@
+h1 {
+  text-align: center;
+  font-family: sans-serif;
+}
+
+.container-buttons {
+  padding: 10px 0px;
+}
+
+button {
+  height: 40px;
+  width: 90px;
+  background: #56a2e2;
+  border-radius: 10px;
+  margin-right: 10px;
+  border-color: #56a2e2;
+  color: white;
+}
+
+#parent {
+  position: relative;
+  background: white;
+  height: 80vh;
+  width: 100%;
+  border-radius: 25px;
+  box-shadow: 1px 1px 38px 0px rgba(0, 0, 0, 0.4);
+  -webkit-box-shadow: 1px 1px 38px 0px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 1px 1px 38px 0px rgba(0, 0, 0, 0.4);
+}
+
+main {
+  height: 100vh;
+  padding: 30px 100px;
+}

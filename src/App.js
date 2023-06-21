@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import Moveable from "react-moveable";
+import "./style/App.css";
 
 const App = () => {
   const [moveableComponents, setMoveableComponents] = useState([]);
@@ -81,18 +82,16 @@ const App = () => {
   };
 
   return (
-    <main style={{ height: "100vh", width: "100vw" }}>
-      <button onClick={addMoveable}>Add Moveable1</button>
-      <button onClick={deleteMoveable}>Delete Moveable</button>
-      <div
-        id="parent"
-        style={{
-          position: "relative",
-          background: "black",
-          height: "80vh",
-          width: "80vw",
-        }}
-      >
+    <main>
+      <h1> Challenge Kosmos React JS </h1>
+
+      <div className="container-buttons">
+        <button onClick={addMoveable}>Add </button>
+        <button disabled={!selected} onClick={deleteMoveable}>
+          Delete
+        </button>
+      </div>
+      <div id="parent">
         {moveableComponents.map((item, index) => (
           <Component
             {...item}
