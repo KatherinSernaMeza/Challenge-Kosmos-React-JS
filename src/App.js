@@ -5,10 +5,14 @@ const App = () => {
   const [moveableComponents, setMoveableComponents] = useState([]);
   const [selected, setSelected] = useState(null);
 
-  const addMoveable = () => {
+  const addMoveable = async () => {
     // Create a new moveable component and add it to the array
     const COLORS = ["red", "blue", "yellow", "green", "purple"];
+    const FIT = ["fill", "contain", "cover", "none", "scale-down"];
+    const imageId = Math.floor(Math.random() * 5000);
 
+    const image = await getImage(imageId);
+    console.log("ff e", image);
     setMoveableComponents([
       ...moveableComponents,
       {
@@ -17,10 +21,21 @@ const App = () => {
         left: 0,
         width: 100,
         height: 100,
+        image: image,
+        fit: FIT[Math.floor(Math.random() * FIT.length)],
         color: COLORS[Math.floor(Math.random() * COLORS.length)],
-        updateEnd: true
+        updateEnd: true,
       },
     ]);
+  };
+
+  const getImage = async (id) => {
+    const response = await fetch(
+      `https://jsonplaceholder.typicode.com/photos/${id}`
+    );
+    const data = await response.json();
+    console.log("ff", data);
+    return data.url;
   };
 
   const updateMoveable = (id, newComponent, updateEnd = false) => {
@@ -55,7 +70,7 @@ const App = () => {
   };
 
   return (
-    <main style={{ height : "100vh", width: "100vw" }}>
+    <main style={{ height: "100vh", width: "100vw" }}>
       <button onClick={addMoveable}>Add Moveable1</button>
       <div
         id="parent"
@@ -90,6 +105,8 @@ const Component = ({
   width,
   height,
   index,
+  image,
+  fit,
   color,
   id,
   setSelected,
@@ -110,7 +127,7 @@ const Component = ({
 
   let parent = document.getElementById("parent");
   let parentBounds = parent?.getBoundingClientRect();
-  
+
   const onResize = async (e) => {
     // ACTUALIZAR ALTO Y ANCHO
     let newWidth = e.width;
@@ -129,6 +146,8 @@ const Component = ({
       left,
       width: newWidth,
       height: newHeight,
+      image,
+      fit,
       color,
     });
 
@@ -155,7 +174,7 @@ const Component = ({
   const onResizeEnd = async (e) => {
     let newWidth = e.lastEvent?.width;
     let newHeight = e.lastEvent?.height;
-
+    console.log(e.lastEvent);
     const positionMaxTop = top + newHeight;
     const positionMaxLeft = left + newWidth;
 
@@ -168,8 +187,8 @@ const Component = ({
     const { drag } = lastEvent;
     const { beforeTranslate } = drag;
 
-    const absoluteTop = top + beforeTranslate[1];
-    const absoluteLeft = left + beforeTranslate[0];
+    const absoluteTop = top;
+    const absoluteLeft = left;
 
     updateMoveable(
       id,
@@ -179,6 +198,8 @@ const Component = ({
         width: newWidth,
         height: newHeight,
         color,
+        image,
+        fit,
       },
       true
     );
@@ -197,6 +218,9 @@ const Component = ({
           width: width,
           height: height,
           background: color,
+          backgroundImage: `url(${image})`,
+          backgroundRepeat: "no-repeat",
+          objectFit: fit,
         }}
         onClick={() => setSelected(id)}
       />
@@ -211,7 +235,9 @@ const Component = ({
             left: e.left,
             width,
             height,
+            image,
             color,
+            fit,
           });
         }}
         onResize={onResize}
